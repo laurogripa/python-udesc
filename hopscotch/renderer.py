@@ -2,7 +2,7 @@ import math
 
 import pygame
 
-from hopscotch.geometry import Segment, merge_segments, rect_segments
+from hopscotch.court import Segment, merge_segments, rect_segments
 from hopscotch.models import Tile
 from hopscotch.settings import (
     BG,
