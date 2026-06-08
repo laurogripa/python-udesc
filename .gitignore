@@ -1,0 +1,50 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.pyre/
+.tox/
+.nox/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Packaging and build output
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Logs and runtime files
+*.log
+*.pid
+
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Editors and OS files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Pygame or game assets generated locally
+screenshots/
+captures/
+recordings/
+assets/generated/
