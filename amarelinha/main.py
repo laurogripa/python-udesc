@@ -1,6 +1,6 @@
 import argparse
 
-from hopscotch.game import HopscotchGame
+from game.main import Amarelinha
 
 
 def parse_args() -> argparse.Namespace:
@@ -13,7 +13,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    game = HopscotchGame()
+    game = Amarelinha()
     if args.smoke_test:
         game.smoke_test()
     else:

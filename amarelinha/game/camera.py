@@ -4,7 +4,7 @@ from typing import Any
 
 import pygame
 
-from hopscotch.settings import (
+from game.settings import (
     CAMERA_HEIGHT,
     CAMERA_SCAN_LIMIT,
     CAMERA_WIDTH,

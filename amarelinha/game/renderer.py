@@ -2,10 +2,10 @@ import math
 
 import pygame
 
-from hopscotch.camera import CameraDevice
-from hopscotch.court import Segment, merge_segments, rect_segments
-from hopscotch.models import Tile
-from hopscotch.settings import (
+from game.camera import CameraDevice
+from game.court import Segment, merge_segments, rect_segments
+from game.models import Tile
+from game.settings import (
     BG,
     CAMERA_HEIGHT,
     CAMERA_MARGIN,

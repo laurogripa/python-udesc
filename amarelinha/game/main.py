@@ -1,12 +1,12 @@
 import pygame
 
-from hopscotch.camera import CameraManager
-from hopscotch.court import build_tiles
-from hopscotch.renderer import GameRenderer
-from hopscotch.settings import FPS, HEIGHT, HOP_GROUPS, PLAYER_START_Y_OFFSET, WIDTH, HopGroup
+from game.camera import CameraManager
+from game.court import build_tiles
+from game.renderer import GameRenderer
+from game.settings import FPS, HEIGHT, HOP_GROUPS, PLAYER_START_Y_OFFSET, WIDTH, HopGroup
 
 
-class HopscotchGame:
+class Amarelinha:
     def __init__(self) -> None:
         pygame.init()
         pygame.display.set_caption("Amarelinha")

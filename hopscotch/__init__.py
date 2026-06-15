@@ -1,1 +1,0 @@
-"""Hopscotch game package."""

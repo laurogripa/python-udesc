@@ -1,7 +1,7 @@
 import pygame
 
-from hopscotch.models import Tile
-from hopscotch.settings import (
+from game.models import Tile
+from game.settings import (
     COURT_BOTTOM_Y_OFFSET,
     HEIGHT,
     SKY_TILE_HEIGHT,
