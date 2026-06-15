@@ -167,41 +167,6 @@ A distinção depende da implementação: uma linguagem pode combinar compilaç�
 
 ---
 
-<!-- _class: code-comparison -->
-
-## Hello, World!: Python vs. C
-
-<div class="columns">
-
-<div>
-
-### Python
-
-```python
-print("Hello, World!")
-```
-
-</div>
-
-<div>
-
-### C
-
-```c
-#include <stdio.h>
-
-int main(void) {
-    printf("Hello, World!\n");
-    return 0;
-}
-```
-
-</div>
-
-</div>
-
----
-
 <!-- _class: content -->
 
 ## Linguagem interpretada
@@ -224,31 +189,21 @@ Java também usa uma representação intermediária; JavaScript normalmente é e
 
 ---
 
-<!-- _class: content -->
+<!-- _class: table-slide -->
 
 ## Tipagem dinâmica e forte
 
-<div class="compact columns">
+<table class="classic-table comparison-table">
+<tr><th>Critério</th><th>Dinâmica</th><th>Forte</th></tr>
+<tr><td>Associação do tipo</td><td>O tipo está associado ao <strong>valor</strong>, não à variável</td><td>Os valores preservam seus tipos durante as operações</td></tr>
+<tr><td>Flexibilidade</td><td>Uma variável pode receber valores de tipos diferentes</td><td>Conversões incompatíveis não são realizadas implicitamente</td></tr>
+<tr><td>Consequência</td><td>Menos declarações são necessárias no código inicial</td><td>Operações entre tipos inadequados geram erro</td></tr>
+<tr><td>Conversões</td><td>O tipo é determinado durante a execução</td><td>Conversões devem ser feitas de forma explícita</td></tr>
+</table>
 
-<div>
+<div class="note">
 
-### Dinâmica
-
-- O tipo está associado ao **valor**, não à variável.
-- Uma variável pode receber valores de tipos diferentes.
-- Menos declarações são necessárias no código inicial.
-
-</div>
-
-<div>
-
-### Forte
-
-- Python evita conversões implícitas incompatíveis.
-- Operações entre tipos inadequados geram erro.
-- Conversões devem ser feitas de forma explícita.
-
-</div>
+Python possui tipagem <strong>dinâmica e forte</strong>. Também utiliza <em>duck typing</em>: o que importa é o comportamento oferecido pelo objeto, e não seu tipo declarado.
 
 </div>
 
@@ -310,7 +265,7 @@ Java também usa uma representação intermediária; JavaScript normalmente é e
 
 - O interpretador adiciona custo à execução.
 - A tipagem dinâmica exige verificações em tempo de execução.
-- Em CPython, o **GIL** limita a execução simultânea de bytecode por múltiplas threads.
+- Em CPython, o **Global Interpreter Lock (GIL)** limita a execução simultânea de bytecode por múltiplas threads.
 - Python pode ser mais lento que linguagens compiladas em tarefas intensivas de CPU.
 - Em automação, integração e prototipagem, o tempo de desenvolvimento costuma ser mais importante.
 
@@ -369,6 +324,73 @@ Primeiro identifique o gargalo; depois escolha a estratégia adequada.
 - Grande quantidade de bibliotecas
 - Boa curva de aprendizado
 - Aplicação em scripts, automações e MVPs
+
+</div>
+
+---
+
+<!-- _class: code-comparison -->
+
+## Hello, World!: Python vs. C
+
+<div class="columns">
+
+<div>
+
+### Python
+
+```python
+print("Hello, World!")
+```
+
+</div>
+
+<div>
+
+### C
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    printf("Hello, World!\n");
+    return 0;
+}
+```
+
+</div>
+
+</div>
+
+---
+
+<!-- _class: code-comparison -->
+
+## Indentação e sintaxe
+
+<div class="columns">
+
+<div>
+
+- A indentação define os blocos de código.
+- Os dois-pontos (`:`) iniciam um novo bloco.
+- Não são necessárias chaves para delimitar o escopo.
+- O padrão recomendado é usar quatro espaços por nível.
+
+</div>
+
+<div>
+
+```python
+idade = 18
+
+if idade >= 18:
+    print("Maior de idade")
+else:
+    print("Menor de idade")
+```
+
+</div>
 
 </div>
 
