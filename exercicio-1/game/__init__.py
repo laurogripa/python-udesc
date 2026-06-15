@@ -1,0 +1,1 @@
+"""Amarelinha game package."""

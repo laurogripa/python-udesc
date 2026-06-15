@@ -49,3 +49,6 @@ screenshots/
 captures/
 recordings/
 assets/generated/
+
+# Gabarito local dos exercícios
+respostas.md
