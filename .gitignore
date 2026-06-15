@@ -29,6 +29,7 @@ dist/
 # Logs and runtime files
 *.log
 *.pid
+*.nvimlog
 
 # Coverage
 .coverage

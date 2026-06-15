@@ -1,1 +1,2 @@
 pygame==2.6.1
+mediapipe==0.10.35

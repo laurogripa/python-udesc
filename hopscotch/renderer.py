@@ -2,21 +2,32 @@ import math
 
 import pygame
 
+from hopscotch.camera import CameraDevice
 from hopscotch.court import Segment, merge_segments, rect_segments
 from hopscotch.models import Tile
 from hopscotch.settings import (
     BG,
+    CAMERA_HEIGHT,
+    CAMERA_MARGIN,
+    CAMERA_WIDTH,
     COURT_LINE,
     ERROR,
+    GEAR_SIZE,
     HEIGHT,
     INK,
     NUMBER_COLORS,
+    PANEL,
+    PANEL_BORDER,
+    PANEL_HOVER,
     PLAYER,
     PLAYER_RADIUS,
     PLAYER_SHADOW,
+    SETTINGS_MARGIN,
+    SETTINGS_WIDTH,
     START_LINE_LEFT,
     START_LINE_RIGHT,
     START_LINE_Y_OFFSET,
+    WIDTH,
     Color,
 )
 
@@ -26,20 +37,43 @@ class GameRenderer:
         self.screen = screen
         self.font = pygame.font.SysFont("arial", 34, bold=True)
         self.small_font = pygame.font.SysFont("arial", 22)
+        self.menu_font = pygame.font.SysFont("arial", 18)
         self.sky_font = pygame.font.SysFont("arial", 30, bold=True)
+        self.gear_rect = pygame.Rect(
+            WIDTH - SETTINGS_MARGIN - GEAR_SIZE,
+            SETTINGS_MARGIN,
+            GEAR_SIZE,
+            GEAR_SIZE,
+        )
+        self.camera_option_rects: dict[int, pygame.Rect] = {}
 
     def draw(
         self,
         tiles: list[Tile],
         player_positions: list[pygame.Vector2],
         error_message: str,
+        camera_frame: pygame.Surface | None,
+        camera_devices: list[CameraDevice],
+        selected_camera: int | None,
+        settings_open: bool,
+        cameras_scanned: bool,
     ) -> None:
         self.screen.fill(BG)
         self._draw_instructions(error_message)
         self._draw_court(tiles)
         self._draw_start_line()
         self._draw_player(player_positions)
+        self._draw_camera_preview(camera_frame)
+        self._draw_gear()
+        if settings_open:
+            self._draw_settings(camera_devices, selected_camera, cameras_scanned)
         pygame.display.flip()
+
+    def camera_option_at(self, position: tuple[int, int]) -> int | None:
+        for index, rect in self.camera_option_rects.items():
+            if rect.collidepoint(position):
+                return index
+        return None
 
     def _draw_instructions(self, error_message: str) -> None:
         lines = [
@@ -97,6 +131,81 @@ class GameRenderer:
             pygame.draw.circle(self.screen, PLAYER_SHADOW, shadow_center, PLAYER_RADIUS)
             pygame.draw.circle(self.screen, PLAYER, center, PLAYER_RADIUS)
             pygame.draw.circle(self.screen, INK, center, PLAYER_RADIUS, width=3)
+
+    def _draw_camera_preview(self, frame: pygame.Surface | None) -> None:
+        rect = pygame.Rect(
+            WIDTH - CAMERA_MARGIN - CAMERA_WIDTH,
+            HEIGHT - CAMERA_MARGIN - CAMERA_HEIGHT,
+            CAMERA_WIDTH,
+            CAMERA_HEIGHT,
+        )
+        pygame.draw.rect(self.screen, PANEL, rect)
+        pygame.draw.rect(self.screen, PANEL_BORDER, rect, width=2)
+
+        if frame is not None:
+            self.screen.blit(frame, rect)
+            return
+
+        text = self.menu_font.render("Selecione uma câmera", True, INK)
+        self.screen.blit(text, text.get_rect(center=rect.center))
+
+    def _draw_gear(self) -> None:
+        center = self.gear_rect.center
+        pygame.draw.circle(self.screen, PANEL, center, GEAR_SIZE // 2)
+        pygame.draw.circle(self.screen, PANEL_BORDER, center, GEAR_SIZE // 2, width=2)
+
+        for angle in range(0, 360, 45):
+            direction = pygame.Vector2(0, -1).rotate(angle)
+            start = pygame.Vector2(center) + direction * 10
+            end = pygame.Vector2(center) + direction * 16
+            pygame.draw.line(self.screen, INK, start, end, 4)
+
+        pygame.draw.circle(self.screen, INK, center, 9, width=3)
+        pygame.draw.circle(self.screen, PANEL, center, 3)
+
+    def _draw_settings(
+        self,
+        devices: list[CameraDevice],
+        selected_camera: int | None,
+        cameras_scanned: bool,
+    ) -> None:
+        panel_height = 86 + max(1, len(devices)) * 44
+        panel = pygame.Rect(
+            WIDTH - SETTINGS_MARGIN - SETTINGS_WIDTH,
+            self.gear_rect.bottom + 10,
+            SETTINGS_WIDTH,
+            panel_height,
+        )
+        pygame.draw.rect(self.screen, PANEL, panel)
+        pygame.draw.rect(self.screen, PANEL_BORDER, panel, width=2)
+
+        title = self.small_font.render("Câmera", True, INK)
+        self.screen.blit(title, (panel.x + 18, panel.y + 16))
+        self.camera_option_rects = {}
+
+        if not cameras_scanned:
+            status = "Procurando câmeras..."
+        elif not devices:
+            status = "Nenhuma câmera encontrada"
+        else:
+            status = ""
+
+        if status:
+            text = self.menu_font.render(status, True, INK)
+            self.screen.blit(text, (panel.x + 18, panel.y + 56))
+            return
+
+        mouse_position = pygame.mouse.get_pos()
+        for row, device in enumerate(devices):
+            option = pygame.Rect(panel.x + 10, panel.y + 52 + row * 44, panel.width - 20, 36)
+            if option.collidepoint(mouse_position):
+                pygame.draw.rect(self.screen, PANEL_HOVER, option)
+            if device.index == selected_camera:
+                pygame.draw.circle(self.screen, INK, (option.x + 15, option.centery), 5)
+
+            label = self.menu_font.render(device.name, True, INK)
+            self.screen.blit(label, (option.x + 30, option.y + 8))
+            self.camera_option_rects[device.index] = option
 
     def _draw_sky_tile(self, rect: pygame.Rect) -> None:
         scale = 4
