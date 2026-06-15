@@ -41,6 +41,7 @@ Mestrado em Computação Aplicada<br>
 - Breve experiência profissional com **Python**, em 2019.
 - Nos últimos **5 anos**, atua como freelancer em Web3/Blockchain com TypeScript, React e Rust.
 - Especializou-se em **Web, Desenvolvimento Ágil e Sistemas Descentralizados (Blockchain)**.
+- Busca se especializar em **jogos sérios** e **interfaces cérebro-computador (BCIs)**.
 
 </div>
 
@@ -268,6 +269,7 @@ Python possui tipagem <strong>dinâmica e forte</strong>. Também utiliza <em>du
 - Em CPython, o **Global Interpreter Lock (GIL)** limita a execução simultânea de bytecode por múltiplas threads.
 - Python pode ser mais lento que linguagens compiladas em tarefas intensivas de CPU.
 - Em automação, integração e prototipagem, o tempo de desenvolvimento costuma ser mais importante.
+- Exemplo: o Docker Compose, originalmente implementado em Python, foi reescrito em Go para sua segunda versão.
 
 </div>
 
@@ -320,7 +322,7 @@ Primeiro identifique o gargalo; depois escolha a estratégia adequada.
 - Sintaxe simples e legível
 - Pouco código para produzir resultados úteis
 - Facilidade para testar ideias rapidamente
-- REPL e notebooks para experimentação
+- REPL (Read-Eval-Print Loop) e notebooks para experimentação
 - Grande quantidade de bibliotecas
 - Boa curva de aprendizado
 - Aplicação em scripts, automações e MVPs
@@ -404,10 +406,10 @@ else:
 
 <div>
 
-- Ciência de dados
+- Ciência de dados (Jupyter Notebook)
 - Inteligência artificial e *machine learning*
 - Automação de tarefas
-- Desenvolvimento web
+- Desenvolvimento web (Django)
 - APIs e backends
 
 </div>
@@ -436,53 +438,13 @@ else:
 
 <!-- _class: content -->
 
-## Sintaxe básica
-
-<div class="compact columns">
-
-<div>
-
-### Estrutura
-
-- Indentação obrigatória
-- Comentários com `#`
-- Blocos sem chaves
-- Código organizado em arquivos `.py`
-
-</div>
-
-<div>
-
-### Variáveis e tipos
-
-- `int`
-- `float`
-- `str`
-- `bool`
-- Operadores aritméticos e lógicos
-
-</div>
-
-</div>
-
----
-
-<!-- _class: content -->
-
-## Entrada, saída e conversão
+## Exemplos
 
 <div class="compact">
 
-- `print()` exibe valores na saída padrão.
-- `input()` lê uma linha digitada pelo usuário.
-- O resultado de `input()` é sempre uma string.
-- Funções como `int()`, `float()` e `str()` convertem valores.
+Exercícios e exemplos interativos de Python:
 
-</div>
-
-<div class="note">
-
-Entradas inválidas precisam ser tratadas para evitar erros em tempo de execução.
+<https://www.learnpython.org/>
 
 </div>
 
@@ -490,261 +452,13 @@ Entradas inválidas precisam ser tratadas para evitar erros em tempo de execuç�
 
 <!-- _class: content -->
 
-## Estruturas condicionais
-
-<div class="compact columns">
-
-<div>
-
-### Decisão
-
-- `if`
-- `elif`
-- `else`
-
-</div>
-
-<div>
-
-### Expressões
-
-- Operadores relacionais
-- `and`, `or` e `not`
-- Valores verdadeiros e falsos
-- Condições combinadas
-
-</div>
-
-</div>
-
----
-
-<!-- _class: content -->
-
-## Estruturas de repetição
-
-<div class="compact columns">
-
-<div>
-
-### `while`
-
-- Repete enquanto uma condição for verdadeira.
-- Útil quando a quantidade de repetições não é conhecida.
-- Exige cuidado com loops infinitos.
-
-</div>
-
-<div>
-
-### `for`
-
-- Percorre itens de uma sequência.
-- `range()` produz sequências numéricas.
-- `break` interrompe o loop.
-- `continue` avança para a próxima repetição.
-
-</div>
-
-</div>
-
----
-
-<!-- _class: content -->
-
-## Coleções
-
-<div class="compact columns">
-
-<div>
-
-- **Listas:** ordenadas e mutáveis
-- **Tuplas:** ordenadas e imutáveis
-- **Dicionários:** pares de chave e valor
-- **Conjuntos:** valores únicos sem ordem garantida
-
-</div>
-
-<div>
-
-- Strings também são sequências.
-- Indexação acessa uma posição.
-- *Slicing* seleciona partes de uma sequência.
-- Loops permitem percorrer todos os elementos.
-
-</div>
-
-</div>
-
----
-
-<!-- _class: content -->
-
-## Funções
+## Demonstração e Exercícios
 
 <div class="compact">
 
-- Funções são definidas com `def`.
-- Parâmetros recebem dados de entrada.
-- `return` devolve um resultado.
-- Variáveis criadas dentro da função possuem escopo local.
-- Funções reduzem repetição e organizam responsabilidades.
+Código-fonte, demonstração e exercícios disponíveis no GitHub:
 
-</div>
-
-<div class="note">
-
-Uma boa função realiza uma tarefa clara e possui entradas e saídas compreensíveis.
-
-</div>
-
----
-
-<!-- _class: content -->
-
-## Módulos e importações
-
-<div class="compact columns">
-
-<div>
-
-### Reutilização
-
-- `import` carrega módulos.
-- A biblioteca padrão oferece recursos prontos.
-- Pacotes agrupam módulos relacionados.
-
-</div>
-
-<div>
-
-### Organização
-
-- Separar responsabilidades em arquivos
-- Evitar arquivos excessivamente grandes
-- Reutilizar funções e classes
-- Tornar dependências explícitas
-
-</div>
-
-</div>
-
----
-
-<!-- _class: content -->
-
-## Tratamento de erros
-
-<div class="compact">
-
-- `try` envolve uma operação que pode falhar.
-- `except` trata uma exceção esperada.
-- Mensagens claras ajudam o usuário a corrigir a entrada.
-- Exceções específicas evitam esconder erros inesperados.
-
-</div>
-
-<div class="note">
-
-Erros comuns de iniciantes incluem indentação incorreta, nomes inexistentes, conversões inválidas e acesso a índices fora da coleção.
-
-</div>
-
----
-
-<!-- _class: content -->
-
-## Demonstração com Pygame
-
-<div class="compact">
-
-- Criar uma janela
-- Entender a estrutura básica de um jogo
-- Processar eventos
-- Atualizar o estado
-- Desenhar na tela
-- Repetir essas etapas no loop principal
-
-</div>
-
----
-
-<!-- _class: content -->
-
-## Estrutura do loop principal
-
-<div class="compact columns">
-
-<div>
-
-### Entrada e atualização
-
-- Capturar teclado
-- Processar eventos
-- Mover um objeto
-- Detectar colisão simples
-
-</div>
-
-<div>
-
-### Desenho e controle
-
-- Limpar a tela
-- Desenhar formas
-- Atualizar a janela
-- Controlar FPS
-- Encerrar corretamente
-
-</div>
-
-</div>
-
----
-
-<!-- _class: content -->
-
-## Recapitulação
-
-<div class="compact">
-
-- Python é uma linguagem acessível, produtiva e multiparadigma.
-- A tipagem dinâmica acelera o desenvolvimento, mas exige disciplina.
-- O ecossistema torna Python útil em diversas áreas.
-- A linguagem é uma boa escolha para automação, ensino e prototipagem.
-- Restrições de desempenho podem exigir bibliotecas ou tecnologias complementares.
-
-</div>
-
----
-
-<!-- _class: content -->
-
-## Próximos passos
-
-<div class="compact columns">
-
-<div>
-
-### Estudo
-
-- Praticar sintaxe e coleções
-- Criar funções pequenas
-- Organizar código em módulos
-- Aprender a ler mensagens de erro
-
-</div>
-
-<div>
-
-### Desafio com Pygame
-
-- Mover um objeto com o teclado
-- Impedir que ele saia da janela
-- Adicionar um obstáculo
-- Detectar e indicar uma colisão
-
-</div>
+<https://github.com/laurogripa/python-udesc>
 
 </div>
 
