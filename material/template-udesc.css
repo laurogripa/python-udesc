@@ -1,0 +1,635 @@
+/* @theme template-udesc */
+
+@import "default";
+
+:root {
+  --bg: #ffffff;
+  --ink: #131314;
+  --muted: #626466;
+  --rule: #d9d9d9;
+  --green: #024d25;
+  --green-2: #009b4e;
+  --red: #ef3e42;
+  --font-body: Arial, Helvetica, sans-serif;
+  --font-heading: "Arial Black", Arial, Helvetica, sans-serif;
+  --slide-x: 20px;
+  --footer-logo-h: 39px;
+  --footer-logo-gap: 12px;
+  --footer-clear: calc(var(--footer-logo-gap) + var(--footer-logo-h) + 10px);
+}
+
+* {
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+section {
+  width: 1280px;
+  height: 720px;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 28px;
+  line-height: 1.36;
+  letter-spacing: 0;
+  overflow: visible;
+}
+
+section:not(.title) {
+  padding: 62px 108px 72px var(--slide-x);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-heading);
+  font-weight: 900;
+  letter-spacing: 0;
+  overflow: visible;
+}
+
+h1 {
+  font-size: 44px;
+  line-height: 1.05;
+}
+
+h2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: auto;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  padding: 3px 20px 5px;
+  background: var(--green);
+  color: #ffffff;
+  font-size: 30px;
+  line-height: 1.18;
+}
+
+h3 {
+  font-size: 24px;
+  margin: 0 0 12px;
+}
+
+p,
+ul,
+ol {
+  margin: 0;
+}
+
+p + p,
+ul + p,
+p + ul {
+  margin-top: 22px;
+}
+
+strong {
+  font-weight: 900;
+}
+
+em {
+  font-style: italic;
+}
+
+a {
+  color: var(--green);
+}
+
+section::after {
+  content: attr(data-marpit-pagination) " de " attr(data-marpit-pagination-total);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  right: 0;
+  bottom: 0;
+  width: auto;
+  min-width: 96px;
+  height: 40px;
+  padding: 0 12px;
+  background: var(--green);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+section.title::after {
+  display: none;
+}
+
+section:not(.title)::before {
+  content: "";
+  position: absolute;
+  z-index: 10;
+  left: 10px;
+  bottom: var(--footer-logo-gap);
+  width: 180px;
+  height: var(--footer-logo-h);
+  background-image: url("assets/udesc-horizontal-footer.jpg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: left bottom;
+}
+
+.source {
+  position: absolute;
+  left: var(--slide-x);
+  right: 108px;
+  bottom: 118px;
+  color: #000000;
+  font-size: 17px;
+  line-height: 1.25;
+  text-align: center;
+  padding: 2px 8px 4px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.small {
+  font-size: 20px;
+}
+
+.tight {
+  line-height: 1.1;
+}
+
+section.title {
+  padding: 0;
+}
+
+section.title h1 {
+  position: absolute;
+  top: 254px;
+  left: 94px;
+  right: 94px;
+  transform: translateY(-50%);
+  font-family: var(--font-heading);
+  font-size: 52px;
+  font-weight: 900;
+  text-align: center;
+}
+
+section.title h1 strong {
+  color: var(--ink);
+  font-weight: 900;
+}
+
+section.title .subtitle {
+  position: absolute;
+  left: 170px;
+  right: 170px;
+  top: 288px;
+  font-size: 22px;
+  line-height: 1.28;
+  text-align: center;
+}
+
+section.title .scenario {
+  position: absolute;
+  left: 190px;
+  right: 190px;
+  top: 368px;
+  font-size: 21px;
+}
+
+.quote-box {
+  padding: 16px 22px;
+  border-left: 6px solid var(--green);
+  background: #f3f6f4;
+  font-size: 24px;
+  line-height: 1.3;
+  text-align: left;
+  overflow: visible;
+}
+
+section.title .author {
+  position: absolute;
+  left: 684px;
+  top: 520px;
+  width: 580px;
+  padding-left: 0;
+  font-size: 24px;
+  line-height: 1.28;
+  overflow: visible;
+}
+
+section.title img[alt~="brand"] {
+  position: absolute;
+  left: 228px;
+  top: 543px;
+  width: 333px;
+  height: auto;
+  object-fit: contain;
+}
+
+section.title .cover-divider {
+  position: absolute;
+  left: 622px;
+  top: 508px;
+  width: 2px;
+  height: 172px;
+  background: #777777;
+}
+
+section.article .meta {
+  position: absolute;
+  left: var(--slide-x);
+  top: 68px;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+section.article .stats {
+  position: absolute;
+  right: 108px;
+  top: 68px;
+  width: 320px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  text-align: center;
+  font-size: 18px;
+}
+
+section.article .stat strong {
+  display: block;
+  font-size: 30px;
+}
+
+section.content p {
+  text-align: justify;
+}
+
+section.idea-center {
+  overflow: visible;
+}
+
+section.idea-center .quote-box {
+  position: absolute;
+  z-index: 2;
+  top: 68px;
+  left: var(--slide-x);
+  right: 108px;
+  padding: 12px 18px;
+  font-size: 20px;
+  line-height: 1.25;
+}
+
+section.idea-center img[alt~="diagram"] {
+  position: absolute;
+  z-index: 1;
+  top: 142px;
+  left: var(--slide-x);
+  right: 108px;
+  bottom: var(--footer-clear);
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  margin: auto;
+  object-fit: contain;
+  object-position: center center;
+}
+
+section.quote blockquote {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--ink);
+  font-size: 24px;
+  line-height: 1.35;
+  font-style: italic;
+  text-align: justify;
+}
+
+section.arrows ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+section.arrows li {
+  position: relative;
+  padding-left: 42px;
+  margin: 0 0 24px;
+  text-align: justify;
+}
+
+section.arrows li::before {
+  content: "➔";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--ink);
+  font-weight: 900;
+}
+
+section.image-right .copy,
+section.image-left .copy {
+  width: 54%;
+}
+
+section.image-right img[alt~="hero"],
+section.image-left img[alt~="hero"] {
+  position: absolute;
+  top: 68px;
+  width: 39%;
+  height: 430px;
+  max-height: 430px;
+  object-fit: contain;
+}
+
+section.image-right img[alt~="hero"] {
+  right: 108px;
+  object-position: top right;
+}
+
+section.image-left .copy {
+  margin-left: 49%;
+}
+
+section.image-left img[alt~="hero"] {
+  left: var(--slide-x);
+}
+
+section.model img,
+section.prototype img {
+  position: absolute;
+  left: var(--slide-x);
+  right: 108px;
+  top: 68px;
+  bottom: 118px;
+  width: calc(100% - 122px);
+  height: calc(100% - 186px);
+  object-fit: contain;
+}
+
+section.synthesis h2 {
+  grid-column: 1 / -1;
+}
+
+section.synthesis .block {
+  position: absolute;
+  top: 300px;
+  width: 520px;
+  font-size: 23px;
+}
+
+section.synthesis .block:nth-of-type(1) {
+  left: var(--slide-x);
+}
+
+section.synthesis .block:nth-of-type(2) {
+  right: 108px;
+}
+
+section.references {
+  font-size: 15px;
+  line-height: 1.18;
+}
+
+section.references h2 {
+  margin-bottom: 0;
+}
+
+section.references ul {
+  columns: 2;
+  column-gap: 36px;
+  padding-left: 18px;
+}
+
+section.references li {
+  break-inside: avoid;
+  margin-bottom: 8px;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 42px;
+}
+
+section.zen {
+  font-size: 22px;
+  line-height: 1.18;
+}
+
+section.zen .zen-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  table-layout: fixed;
+}
+
+section.zen .zen-table td {
+  width: 50%;
+  padding: 0 22px;
+  border: 0;
+  vertical-align: middle;
+}
+
+section.zen .zen-table td:first-child {
+  text-align: right;
+}
+
+section.zen .zen-table td:nth-child(2) {
+  text-align: left;
+}
+
+section.table-slide {
+  font-size: 23px;
+  line-height: 1.25;
+}
+
+section.table-slide .classic-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+section.table-slide .classic-table th,
+section.table-slide .classic-table td {
+  padding: 13px 16px;
+  border: 2px solid var(--rule);
+  vertical-align: middle;
+  text-align: left;
+}
+
+section.table-slide .classic-table th {
+  background: #f3f6f4;
+  font-weight: 900;
+}
+
+section.table-slide .classic-table th:first-child,
+section.table-slide .classic-table td:first-child {
+  width: 34%;
+}
+
+section.table-slide .comparison-table th:first-child,
+section.table-slide .comparison-table td:first-child {
+  width: 20%;
+}
+
+section.code-comparison .columns {
+  gap: 36px;
+}
+
+section.code-comparison h3 {
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+section.code-comparison pre {
+  min-height: 300px;
+  margin: 0;
+  padding: 24px;
+  border: 2px solid var(--rule);
+  border-radius: 0;
+  font-size: 24px;
+  line-height: 1.45;
+}
+
+.note {
+  margin-top: 24px;
+  padding: 18px 22px;
+  border-left: 6px solid var(--green);
+  background: #f3f6f4;
+  font-size: 24px;
+  line-height: 1.25;
+}
+
+.compact {
+  font-size: 23px;
+  line-height: 1.36;
+  padding: 4px 10px 8px 0;
+  overflow: visible;
+}
+
+.compact li {
+  margin-bottom: 12px;
+  padding-left: 2px;
+}
+
+section.references {
+  font-size: 21px;
+  line-height: 1.18;
+}
+
+section.references ul {
+  columns: 1;
+  padding-left: 18px;
+}
+
+section.references li {
+  margin-bottom: 8px;
+}
+
+section.references .refs-intro {
+  margin: 0 0 14px;
+  font-size: 18px;
+  line-height: 1.3;
+  color: var(--muted);
+}
+
+section.article-image .article-meta {
+  position: absolute;
+  left: var(--slide-x);
+  right: 108px;
+  top: 488px;
+  color: var(--muted);
+  font-size: 19px;
+  line-height: 1.45;
+  text-align: left;
+}
+
+section.article-image .article-meta strong + strong {
+  color: var(--ink);
+}
+
+section.article-image img[alt~="article"] {
+  position: absolute;
+  left: var(--slide-x);
+  right: 108px;
+  top: 68px;
+  width: calc(100% - 122px);
+  height: auto;
+  object-fit: contain;
+}
+
+section.full-image img[alt~="slide-image"] {
+  position: absolute;
+  top: 68px;
+  left: 50%;
+  right: auto;
+  bottom: var(--footer-clear);
+  width: calc(100% - 216px);
+  height: calc(100% - 68px - var(--footer-clear));
+  transform: translateX(-50%);
+  object-fit: contain;
+}
+
+section.full-image .source {
+  z-index: 20;
+  left: 200px;
+  right: 108px;
+  bottom: 7px;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+section.history > ul {
+  position: absolute;
+  top: 78px;
+  left: var(--slide-x);
+  right: 108px;
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.3;
+}
+
+section.history .portrait {
+  position: absolute;
+  top: 178px;
+  left: 50%;
+  width: 650px;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+section.history .portrait img {
+  display: block;
+  width: 546px;
+  height: 429px;
+  margin: 0 auto;
+  object-fit: cover;
+  object-position: center top;
+}
+
+section.history .portrait-caption {
+  margin-top: 10px;
+  font-size: 21px;
+  line-height: 1.25;
+}
+
+.center {
+  text-align: center;
+}
+
+.logo-mark {
+  position: absolute;
+  right: 86px;
+  bottom: 64px;
+  width: 86px;
+}
