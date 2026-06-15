@@ -12,12 +12,36 @@ paginate: true
 
 # Introdução ao Python
 
+<div class="subtitle">
+<a href="https://github.com/laurogripa/python-udesc">https://github.com/laurogripa/python-udesc</a>
+</div>
+
 <div class="author">
 <strong>Lauro Gripa Neto</strong><br>
 Prof. Dr. Marcelo da Silva Hounsell<br>
 Computação Gráfica Avançada<br>
 Mestrado em Computação Aplicada<br>
 15/06/2026
+</div>
+
+---
+
+<!-- _class: content -->
+
+## Sobre mim
+
+<div class="compact">
+
+- Graduado em **Tecnologia em Análise e Desenvolvimento de Sistemas** pela Universidade do Estado de Santa Catarina, em 2016.
+- Começou a programar por hobby aos **13 anos**, com mIRC Script.
+- Iniciou profissionalmente aos **22 anos**, com PHP e JavaScript.
+- **2,5 anos** no desenvolvimento de ERPs.
+- **5 anos** em consultoria e *outsourcing* especializado, trabalhando com diversas linguagens.
+- Experiência principalmente com **Ruby on Rails**.
+- Breve experiência profissional com **Python**, em 2019.
+- Nos últimos **5 anos**, atua como freelancer em Web3/Blockchain com TypeScript, React e Rust.
+- Especializou-se em **Web, Desenvolvimento Ágil e Sistemas Descentralizados (Blockchain)**.
+
 </div>
 
 ---
@@ -62,6 +86,19 @@ Mestrado em Computação Aplicada<br>
 
 ---
 
+<!-- _class: content -->
+
+## Motivações
+
+- Desenvolver uma linguagem **acessível**, com sintaxe clara e adequada ao trabalho cotidiano.
+- Manter a **simplicidade e legibilidade** da linguagem ABC.
+- Superar a dificuldade de **extensão e integração** da ABC.
+- Automatizar tarefas no sistema operacional distribuído **Amoeba**.
+- Oferecer uma alternativa mais prática que **C** para scripts.
+- Permitir integração fácil com módulos e bibliotecas escritos em **C**.
+
+---
+
 <!-- _class: zen -->
 
 ## Filosofia da linguagem: o Zen do Python
@@ -78,6 +115,19 @@ Mestrado em Computação Aplicada<br>
 <tr><td>A praticidade vence a pureza.</td><td>Se é fácil explicar, pode ser uma boa ideia.</td></tr>
 <tr><td></td><td><em>Namespaces</em> são uma ótima ideia: vamos usá-los mais!</td></tr>
 </table>
+
+---
+
+<!-- _class: content -->
+
+## Principais características
+
+- Execução **interpretada**, normalmente a partir de bytecode.
+- Suporte a múltiplos **paradigmas de programação**.
+- Blocos de código definidos por **indentação significativa**.
+- Tipagem **dinâmica e forte**.
+- **Gerenciamento automático de memória**.
+- Ampla biblioteca padrão e ecossistema **extensível**.
 
 ---
 
