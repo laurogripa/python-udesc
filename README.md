@@ -4,6 +4,29 @@ Projeto de implementação do clássico jogo infantil Amarelinha, desenvolvido p
 
 **Objetivo:** Introdução ao Python e PyGame. Desafios progressivos de código.
 
+## Requisitos
+
+- **pyenv** 2.7.2
+- **Python** 3.13.7
+- **pip** — incluso com Python 3.13.7 (`python3 -m pip`)
+
+### Instalação
+
+Consulte a documentação oficial de cada ferramenta:
+
+- **pyenv:** <https://github.com/pyenv/pyenv#installation>
+- **Python 3.13.7:** <https://www.python.org/downloads/release/python-3137/>
+- **pip:** <https://pip.pypa.io/en/stable/installation/>
+
+Run:
+
+```bash
+cd amarelinha
+python3 -m pip install -r requirements-dev.txt
+```
+
+Repita o comando em cada pasta de exercício (`exercicio-1`, `exercicio-2`, etc.) para instalar as dependências de desenvolvimento.
+
 # Progressão dos exercícios da Amarelinha
 
 A pasta `amarelinha` contém a implementação final e não deve ser alterada. Em todos os
