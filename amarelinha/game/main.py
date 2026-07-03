@@ -28,6 +28,7 @@ class Amarelinha:
         show_skeleton: bool = False,
         screen_index: int = 0,
         show_markers: bool = False,
+        show_feet: bool = False,
     ) -> None:
         pygame.init()
         pygame.display.set_caption("Amarelinha")
@@ -56,6 +57,7 @@ class Amarelinha:
         self.error_message = ""
         self.won = False
         self.show_markers = show_markers
+        self.show_feet = show_feet
         self._initialize_camera()
 
     def run(self) -> None:
@@ -180,6 +182,7 @@ class Amarelinha:
             self.camera.projected_feet(),
             self.camera.jump_probability,
             self.show_markers,
+            self.show_feet,
             self.error_message,
             self.camera.frame,
             self.camera.devices,

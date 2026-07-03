@@ -24,6 +24,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Mantém os marcadores de calibração visíveis durante o jogo.",
     )
+    parser.add_argument(
+        "--show-feet",
+        action="store_true",
+        help="Mostra os indicadores dos pés na projeção do jogo.",
+    )
     return parser.parse_args()
 
 
@@ -33,6 +38,7 @@ def main() -> None:
         show_skeleton=args.skeleton,
         screen_index=args.screen,
         show_markers=args.show_markers,
+        show_feet=args.show_feet,
     )
     if args.smoke_test:
         game.smoke_test()

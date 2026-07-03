@@ -61,6 +61,7 @@ class GameRenderer:
         foot_positions: dict[str, tuple[float, float] | None],
         jump_probability: float,
         show_markers: bool,
+        show_feet: bool,
         error_message: str,
         camera_frame: pygame.Surface | None,
         camera_devices: list[CameraDevice],
@@ -75,7 +76,8 @@ class GameRenderer:
             self._draw_calibration_markers()
         self._draw_start_line()
         self._draw_player(player_positions)
-        self._draw_feet(foot_positions)
+        if show_feet:
+            self._draw_feet(foot_positions)
         self._draw_camera_preview(camera_frame)
         self._draw_gear()
         if settings_open:
