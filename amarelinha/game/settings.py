@@ -1,3 +1,5 @@
+from pathlib import Path
+
 Color = tuple[int, int, int]
 HopGroup = tuple[int, ...]
 TileLayout = dict[int, tuple[float, int]]
@@ -5,6 +7,11 @@ TileLayout = dict[int, tuple[float, int]]
 WIDTH = 1280
 HEIGHT = 720
 FPS = 60
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+SETTINGS_FILE = DATA_DIR / "settings.json"
+CALIBRATION_FILE = DATA_DIR / "calibration.json"
 
 TILE_SIZE = 76
 SKY_TILE_WIDTH = 106
@@ -37,6 +44,7 @@ GESTURE_STABLE_FRAMES = 5
 SETTINGS_WIDTH = 300
 SETTINGS_MARGIN = 24
 GEAR_SIZE = 42
+CALIBRATION_MARKER_RADIUS = 60
 
 NUMBER_COLORS: dict[int, Color] = {
     1: (255, 216, 80),

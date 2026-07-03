@@ -43,6 +43,10 @@ class CameraManager:
             capture.release()
         self.scanned = True
 
+    def ensure_devices(self) -> None:
+        if not self.scanned:
+            self.discover()
+
     def select(self, index: int) -> None:
         import cv2
 
@@ -57,6 +61,19 @@ class CameraManager:
         self._capture = capture
         self._landmarker = self._create_landmarker()
         self.selected_index = index
+
+    def select_default(self, preferred_index: int | None = None) -> bool:
+        self.ensure_devices()
+        candidates: list[int] = []
+        if preferred_index is not None:
+            candidates.append(preferred_index)
+        candidates.extend(device.index for device in self.devices if device.index not in candidates)
+
+        for candidate in candidates:
+            self.select(candidate)
+            if self.selected_index == candidate:
+                return True
+        return False
 
     def update(self) -> None:
         if self._capture is None:

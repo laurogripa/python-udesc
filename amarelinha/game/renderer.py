@@ -7,6 +7,7 @@ from game.court import Segment, merge_segments, rect_segments
 from game.models import Tile
 from game.settings import (
     BG,
+    CALIBRATION_MARKER_RADIUS,
     CAMERA_HEIGHT,
     CAMERA_MARGIN,
     CAMERA_WIDTH,
@@ -39,6 +40,7 @@ class GameRenderer:
         self.small_font = pygame.font.SysFont("arial", 22)
         self.menu_font = pygame.font.SysFont("arial", 18)
         self.sky_font = pygame.font.SysFont("arial", 30, bold=True)
+        self.title_font = pygame.font.SysFont("arial", 38, bold=True)
         self.gear_rect = pygame.Rect(
             WIDTH - SETTINGS_MARGIN - GEAR_SIZE,
             SETTINGS_MARGIN,
@@ -46,6 +48,7 @@ class GameRenderer:
             GEAR_SIZE,
         )
         self.camera_option_rects: dict[int, pygame.Rect] = {}
+        self.settings_confirm_rect = pygame.Rect(0, 0, 0, 0)
 
     def draw(
         self,
@@ -69,11 +72,97 @@ class GameRenderer:
             self._draw_settings(camera_devices, selected_camera, cameras_scanned)
         pygame.display.flip()
 
+    def draw_settings_screen(
+        self,
+        camera_frame: pygame.Surface | None,
+        camera_devices: list[CameraDevice],
+        selected_camera: int | None,
+        cameras_scanned: bool,
+        error_message: str,
+    ) -> None:
+        self.screen.fill(BG)
+        title = self.title_font.render("Configurações da câmera", True, INK)
+        self.screen.blit(title, title.get_rect(center=(WIDTH // 2, 64)))
+        subtitle = self.menu_font.render(
+            "Selecione uma câmera e pressione Enter ou clique em Confirmar.",
+            True,
+            INK,
+        )
+        self.screen.blit(subtitle, subtitle.get_rect(center=(WIDTH // 2, 104)))
+
+        self._draw_camera_preview(camera_frame)
+        self._draw_settings(camera_devices, selected_camera, cameras_scanned)
+
+        self.settings_confirm_rect = pygame.Rect(WIDTH // 2 - 90, HEIGHT - 110, 180, 44)
+        pygame.draw.rect(self.screen, PANEL_HOVER, self.settings_confirm_rect, border_radius=10)
+        pygame.draw.rect(
+            self.screen,
+            PANEL_BORDER,
+            self.settings_confirm_rect,
+            width=2,
+            border_radius=10,
+        )
+        label = self.small_font.render("Confirmar", True, INK)
+        self.screen.blit(label, label.get_rect(center=self.settings_confirm_rect.center))
+
+        if error_message:
+            error = self.menu_font.render(error_message, True, ERROR)
+            self.screen.blit(error, error.get_rect(center=(WIDTH // 2, HEIGHT - 48)))
+
+        pygame.display.flip()
+
+    def draw_calibration_screen(
+        self,
+        points: list[list[float]],
+        complete: bool,
+        message: str,
+    ) -> None:
+        self.screen.fill((25, 25, 30))
+        markers = (
+            (0, 0, "1"),
+            (WIDTH, 0, "2"),
+            (0, HEIGHT, "3"),
+            (WIDTH, HEIGHT, "4"),
+        )
+        for x, y, label in markers:
+            pygame.draw.circle(self.screen, NUMBER_COLORS[1], (x, y), CALIBRATION_MARKER_RADIUS)
+            text = self.font.render(label, True, BG)
+            px = min(max(x, 34), WIDTH - 34)
+            py = min(max(y, 34), HEIGHT - 34)
+            self.screen.blit(text, text.get_rect(center=(px, py)))
+
+        for index, (x, y) in enumerate(points, start=1):
+            pygame.draw.circle(self.screen, PLAYER, (int(x), int(y)), 10)
+            tag = self.menu_font.render(str(index), True, INK)
+            self.screen.blit(tag, (int(x) + 12, int(y) - 12))
+
+        if complete:
+            instruction = "4 cantos marcados. Enter confirma, Backspace desfaz, R reinicia."
+        else:
+            labels = (
+                "1) canto superior esquerdo",
+                "2) canto superior direito",
+                "3) canto inferior esquerdo",
+                "4) canto inferior direito",
+            )
+            instruction = f"Clique em {labels[len(points)]}."
+
+        header = self.small_font.render(instruction, True, INK)
+        self.screen.blit(header, header.get_rect(center=(WIDTH // 2, HEIGHT - 84)))
+        if message:
+            footer = self.menu_font.render(message, True, INK)
+            self.screen.blit(footer, footer.get_rect(center=(WIDTH // 2, HEIGHT - 42)))
+
+        pygame.display.flip()
+
     def camera_option_at(self, position: tuple[int, int]) -> int | None:
         for index, rect in self.camera_option_rects.items():
             if rect.collidepoint(position):
                 return index
         return None
+
+    def settings_confirm_at(self, position: tuple[int, int]) -> bool:
+        return self.settings_confirm_rect.collidepoint(position)
 
     def _draw_instructions(self, error_message: str) -> None:
         lines = [
@@ -171,8 +260,8 @@ class GameRenderer:
     ) -> None:
         panel_height = 86 + max(1, len(devices)) * 44
         panel = pygame.Rect(
-            WIDTH - SETTINGS_MARGIN - SETTINGS_WIDTH,
-            self.gear_rect.bottom + 10,
+            WIDTH // 2 - SETTINGS_WIDTH // 2,
+            148,
             SETTINGS_WIDTH,
             panel_height,
         )
