@@ -1,3 +1,4 @@
 {
-  "camera_index": 0
+  "camera_index": 0,
+  "show_skeleton": true
 }

@@ -8,12 +8,32 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--smoke-test", action="store_true", help="Initialize and draw one frame, then exit."
     )
+    parser.add_argument(
+        "--skeleton",
+        action="store_true",
+        help="Renderiza o esqueleto conectado da mão e do corpo na câmera.",
+    )
+    parser.add_argument(
+        "--screen",
+        type=int,
+        default=0,
+        help="Índice da tela onde o jogo será aberto. Padrão: 0.",
+    )
+    parser.add_argument(
+        "--show-markers",
+        action="store_true",
+        help="Mantém os marcadores de calibração visíveis durante o jogo.",
+    )
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
-    game = Amarelinha()
+    game = Amarelinha(
+        show_skeleton=args.skeleton,
+        screen_index=args.screen,
+        show_markers=args.show_markers,
+    )
     if args.smoke_test:
         game.smoke_test()
     else:

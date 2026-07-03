@@ -7,7 +7,9 @@ from game.court import Segment, merge_segments, rect_segments
 from game.models import Tile
 from game.settings import (
     BG,
+    CALIBRATION_DOT_RADIUS,
     CALIBRATION_MARKER_RADIUS,
+    CALIBRATION_MARKER_SIZE,
     CAMERA_HEIGHT,
     CAMERA_MARGIN,
     CAMERA_WIDTH,
@@ -49,11 +51,16 @@ class GameRenderer:
         )
         self.camera_option_rects: dict[int, pygame.Rect] = {}
         self.settings_confirm_rect = pygame.Rect(0, 0, 0, 0)
+        self.settings_skeleton_rect = pygame.Rect(0, 0, 0, 0)
+        self.settings_calibrate_rect = pygame.Rect(0, 0, 0, 0)
 
     def draw(
         self,
         tiles: list[Tile],
         player_positions: list[pygame.Vector2],
+        foot_positions: dict[str, tuple[float, float] | None],
+        jump_probability: float,
+        show_markers: bool,
         error_message: str,
         camera_frame: pygame.Surface | None,
         camera_devices: list[CameraDevice],
@@ -62,15 +69,54 @@ class GameRenderer:
         cameras_scanned: bool,
     ) -> None:
         self.screen.fill(BG)
-        self._draw_instructions(error_message)
+        self._draw_instructions(error_message, jump_probability)
         self._draw_court(tiles)
+        if show_markers:
+            self._draw_calibration_markers()
         self._draw_start_line()
         self._draw_player(player_positions)
+        self._draw_feet(foot_positions)
         self._draw_camera_preview(camera_frame)
         self._draw_gear()
         if settings_open:
             self._draw_settings(camera_devices, selected_camera, cameras_scanned)
         pygame.display.flip()
+
+    def draw_auto_calibration_screen(self, message: str) -> None:
+        self.screen.fill(BG)
+        self._draw_calibration_markers()
+
+        title = self.title_font.render("Calibração Automática", True, INK)
+        self.screen.blit(title, title.get_rect(center=(WIDTH // 2, 72)))
+        subtitle = self.menu_font.render(
+            message,
+            True,
+            INK,
+        )
+        self.screen.blit(subtitle, subtitle.get_rect(center=(WIDTH // 2, 112)))
+        pygame.display.flip()
+
+    def _draw_calibration_markers(self) -> None:
+        size = CALIBRATION_MARKER_SIZE
+        markers = (
+            (pygame.Rect(0, 0, size, size), (0, 0)),
+            (pygame.Rect(WIDTH - size, 0, size, size), (WIDTH, 0)),
+            (pygame.Rect(0, HEIGHT - size, size, size), (0, HEIGHT)),
+            (pygame.Rect(WIDTH - size, HEIGHT - size, size, size), (WIDTH, HEIGHT)),
+        )
+        for rect, corner in markers:
+            pygame.draw.rect(self.screen, (220, 32, 32), rect)
+            dot_x = min(
+                max(corner[0], rect.left + CALIBRATION_DOT_RADIUS),
+                rect.right - CALIBRATION_DOT_RADIUS,
+            )
+            dot_y = min(
+                max(corner[1], rect.top + CALIBRATION_DOT_RADIUS),
+                rect.bottom - CALIBRATION_DOT_RADIUS,
+            )
+            inner = pygame.Rect(0, 0, CALIBRATION_DOT_RADIUS * 2, CALIBRATION_DOT_RADIUS * 2)
+            inner.center = (dot_x, dot_y)
+            pygame.draw.rect(self.screen, (255, 255, 255), inner)
 
     def draw_settings_screen(
         self,
@@ -78,22 +124,39 @@ class GameRenderer:
         camera_devices: list[CameraDevice],
         selected_camera: int | None,
         cameras_scanned: bool,
+        show_skeleton: bool,
         error_message: str,
     ) -> None:
         self.screen.fill(BG)
         title = self.title_font.render("Configurações da câmera", True, INK)
         self.screen.blit(title, title.get_rect(center=(WIDTH // 2, 64)))
         subtitle = self.menu_font.render(
-            "Selecione uma câmera e pressione Enter ou clique em Confirmar.",
+            "Selecione câmera e esqueleto. Enter ou clique em Confirmar.",
             True,
             INK,
         )
         self.screen.blit(subtitle, subtitle.get_rect(center=(WIDTH // 2, 104)))
 
         self._draw_camera_preview(camera_frame)
-        self._draw_settings(camera_devices, selected_camera, cameras_scanned)
+        self._draw_settings(
+            camera_devices,
+            selected_camera,
+            cameras_scanned,
+            show_skeleton,
+        )
 
         self.settings_confirm_rect = pygame.Rect(WIDTH // 2 - 90, HEIGHT - 110, 180, 44)
+        self.settings_calibrate_rect = pygame.Rect(WIDTH // 2 - 90, HEIGHT - 166, 180, 44)
+        pygame.draw.rect(self.screen, PANEL_HOVER, self.settings_calibrate_rect, border_radius=10)
+        pygame.draw.rect(
+            self.screen,
+            PANEL_BORDER,
+            self.settings_calibrate_rect,
+            width=2,
+            border_radius=10,
+        )
+        calibrate = self.small_font.render("Calibrar", True, INK)
+        self.screen.blit(calibrate, calibrate.get_rect(center=self.settings_calibrate_rect.center))
         pygame.draw.rect(self.screen, PANEL_HOVER, self.settings_confirm_rect, border_radius=10)
         pygame.draw.rect(
             self.screen,
@@ -164,7 +227,13 @@ class GameRenderer:
     def settings_confirm_at(self, position: tuple[int, int]) -> bool:
         return self.settings_confirm_rect.collidepoint(position)
 
-    def _draw_instructions(self, error_message: str) -> None:
+    def settings_skeleton_at(self, position: tuple[int, int]) -> bool:
+        return self.settings_skeleton_rect.collidepoint(position)
+
+    def settings_calibrate_at(self, position: tuple[int, int]) -> bool:
+        return self.settings_calibrate_rect.collidepoint(position)
+
+    def _draw_instructions(self, error_message: str, jump_probability: float) -> None:
         lines = [
             "Aperte 1 para",
             "pular com um pé",
@@ -184,6 +253,13 @@ class GameRenderer:
         if error_message:
             error = self.small_font.render(error_message, True, ERROR)
             self.screen.blit(error, (x, y + 24))
+
+        probability = self.small_font.render(
+            f"Salto: {jump_probability * 100:.0f}%",
+            True,
+            INK,
+        )
+        self.screen.blit(probability, (x, y + 70))
 
     def _draw_court(self, tiles: list[Tile]) -> None:
         court_segments: set[Segment] = set()
@@ -221,10 +297,27 @@ class GameRenderer:
             pygame.draw.circle(self.screen, PLAYER, center, PLAYER_RADIUS)
             pygame.draw.circle(self.screen, INK, center, PLAYER_RADIUS, width=3)
 
+    def _draw_feet(self, foot_positions: dict[str, tuple[float, float] | None]) -> None:
+        left = foot_positions.get("left")
+        right = foot_positions.get("right")
+        if left is not None:
+            self._draw_foot_marker(left, (0, 102, 255))
+        if right is not None:
+            self._draw_foot_marker(right, (255, 64, 64))
+
+    def _draw_foot_marker(
+        self,
+        point: tuple[float, float],
+        color: tuple[int, int, int],
+    ) -> None:
+        center = (int(point[0]), int(point[1]))
+        pygame.draw.circle(self.screen, color, center, 18, width=3)
+        pygame.draw.circle(self.screen, color, center, 5)
+
     def _draw_camera_preview(self, frame: pygame.Surface | None) -> None:
         rect = pygame.Rect(
             WIDTH - CAMERA_MARGIN - CAMERA_WIDTH,
-            HEIGHT - CAMERA_MARGIN - CAMERA_HEIGHT,
+            (HEIGHT - CAMERA_HEIGHT) // 2,
             CAMERA_WIDTH,
             CAMERA_HEIGHT,
         )
@@ -257,8 +350,9 @@ class GameRenderer:
         devices: list[CameraDevice],
         selected_camera: int | None,
         cameras_scanned: bool,
+        show_skeleton: bool,
     ) -> None:
-        panel_height = 86 + max(1, len(devices)) * 44
+        panel_height = 136 + max(1, len(devices)) * 44
         panel = pygame.Rect(
             WIDTH // 2 - SETTINGS_WIDTH // 2,
             148,
@@ -270,7 +364,11 @@ class GameRenderer:
 
         title = self.small_font.render("Câmera", True, INK)
         self.screen.blit(title, (panel.x + 18, panel.y + 16))
+        skeleton = self.small_font.render("Esqueleto", True, INK)
+        self.screen.blit(skeleton, (panel.x + 18, panel.y + 56))
         self.camera_option_rects = {}
+        self.settings_skeleton_rect = pygame.Rect(panel.x + 150, panel.y + 52, 128, 32)
+        self._draw_checkbox(self.settings_skeleton_rect, show_skeleton)
 
         if not cameras_scanned:
             status = "Procurando câmeras..."
@@ -281,12 +379,12 @@ class GameRenderer:
 
         if status:
             text = self.menu_font.render(status, True, INK)
-            self.screen.blit(text, (panel.x + 18, panel.y + 56))
+            self.screen.blit(text, (panel.x + 18, panel.y + 98))
             return
 
         mouse_position = pygame.mouse.get_pos()
         for row, device in enumerate(devices):
-            option = pygame.Rect(panel.x + 10, panel.y + 52 + row * 44, panel.width - 20, 36)
+            option = pygame.Rect(panel.x + 10, panel.y + 92 + row * 44, panel.width - 20, 36)
             if option.collidepoint(mouse_position):
                 pygame.draw.rect(self.screen, PANEL_HOVER, option)
             if device.index == selected_camera:
@@ -295,6 +393,22 @@ class GameRenderer:
             label = self.menu_font.render(device.name, True, INK)
             self.screen.blit(label, (option.x + 30, option.y + 8))
             self.camera_option_rects[device.index] = option
+
+    def _draw_checkbox(self, rect: pygame.Rect, checked: bool) -> None:
+        box = pygame.Rect(rect.x, rect.y + 4, 24, 24)
+        pygame.draw.rect(self.screen, INK, box, border_radius=4)
+        pygame.draw.rect(self.screen, PANEL_BORDER, box, width=2, border_radius=4)
+        if checked:
+            pygame.draw.lines(
+                self.screen,
+                PANEL,
+                False,
+                [(box.x + 5, box.y + 12), (box.x + 10, box.y + 17), (box.x + 19, box.y + 6)],
+                3,
+            )
+
+        label = self.menu_font.render("Mostrar", True, INK)
+        self.screen.blit(label, (box.right + 10, rect.y + 7))
 
     def _draw_sky_tile(self, rect: pygame.Rect) -> None:
         scale = 4
