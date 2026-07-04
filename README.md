@@ -25,6 +25,13 @@ cd amarelinha
 python3 -m pip install -r requirements-dev.txt
 ```
 
+Para a versão com projeção no chão:
+
+```bash
+cd amarelinha-chao
+python3 -m pip install -r requirements-dev.txt
+```
+
 Repita o comando em cada pasta de exercício (`exercicio-1`, `exercicio-2`, etc.) para instalar as dependências de desenvolvimento.
 
 # Progressão dos exercícios da Amarelinha
@@ -71,3 +78,24 @@ exercícios, o jogo usa as teclas `1` e `2`: `1` representa um pé e `2` represe
 `amarelinha` acrescenta ao exercício 5 a criação do `HandLandmarker`, a leitura dos pontos da
 mão e a estabilização dos gestos entre quadros. Ela continua aceitando as teclas `1` e `2`,
 além dos gestos correspondentes.
+
+## Amarelinha no chão
+
+`amarelinha-chao` é uma cópia separada da implementação com projeção no chão. Ela preserva a
+versão final original em `amarelinha` e adiciona calibração da área projetada, rastreamento de
+pose, posição dos pés e indicadores visuais para uso com projetor e câmera.
+
+Atalhos principais da versão `amarelinha-chao`:
+
+- `Ctrl+C`: calibração automática pelos marcadores vermelhos.
+- `Ctrl+M`: calibração manual clicando os quatro cantos no preview da câmera.
+- `Ctrl+S`: seleção/configuração da câmera.
+- `--show-feet`: mostra os círculos dos pés e do centro na tela do jogo.
+- `--skeleton`: mostra o esqueleto detectado no preview da câmera.
+
+Exemplo:
+
+```bash
+cd amarelinha-chao
+python3 main.py --show-feet --skeleton
+```
