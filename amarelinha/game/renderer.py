@@ -8,6 +8,7 @@ from game.models import Tile
 from game.settings import (
     BG,
     CALIBRATION_DOT_RADIUS,
+    CALIBRATION_MARKER,
     CALIBRATION_MARKER_SIZE,
     CAMERA_HEIGHT,
     CAMERA_MARGIN,
@@ -106,7 +107,7 @@ class GameRenderer:
             (pygame.Rect(WIDTH - size, HEIGHT - size, size, size), (WIDTH, HEIGHT)),
         )
         for rect, corner in markers:
-            pygame.draw.rect(self.screen, (220, 32, 32), rect)
+            pygame.draw.rect(self.screen, CALIBRATION_MARKER, rect)
             dot_x = min(
                 max(corner[0], rect.left + CALIBRATION_DOT_RADIUS),
                 rect.right - CALIBRATION_DOT_RADIUS,

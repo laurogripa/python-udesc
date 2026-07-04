@@ -244,9 +244,9 @@ class CameraManager:
         attempt = self._calibration_attempt
         bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
-        lower_red_1 = np.array([0, 35, 35], dtype=np.uint8)
+        lower_red_1 = np.array([0, 55, 55], dtype=np.uint8)
         upper_red_1 = np.array([12, 255, 255], dtype=np.uint8)
-        lower_red_2 = np.array([168, 35, 35], dtype=np.uint8)
+        lower_red_2 = np.array([168, 55, 55], dtype=np.uint8)
         upper_red_2 = np.array([180, 255, 255], dtype=np.uint8)
         mask_a = cv2.inRange(hsv, lower_red_1, upper_red_1)
         mask_b = cv2.inRange(hsv, lower_red_2, upper_red_2)
@@ -306,10 +306,11 @@ class CameraManager:
         top_left, top_right = sorted(top, key=lambda item: item[0][0])
         bottom_left, bottom_right = sorted(bottom, key=lambda item: item[0][0])
         points = [
-            list(self._marker_corner(top_left[1], "top_left")),
-            list(self._marker_corner(top_right[1], "top_right")),
-            list(self._marker_corner(bottom_left[1], "bottom_left")),
+            # Camera view is upside down relative to the projected game.
             list(self._marker_corner(bottom_right[1], "bottom_right")),
+            list(self._marker_corner(bottom_left[1], "bottom_left")),
+            list(self._marker_corner(top_right[1], "top_right")),
+            list(self._marker_corner(top_left[1], "top_left")),
         ]
         self._log_calibration_event(
             "auto_calibrate:success",
@@ -642,7 +643,7 @@ class CameraManager:
         import cv2
         import numpy as np
 
-        source = np.float32(self._calibration_points)
+        source = np.float32(self._projection_source_points())
         target = np.float32(
             [
                 [0, 0],
@@ -691,11 +692,14 @@ class CameraManager:
 
         return pixel_x * CAMERA_WIDTH / width, pixel_y * CAMERA_HEIGHT / height
 
+    def _projection_source_points(self) -> list[list[float]]:
+        return self._calibration_points
+
     def _ordered_outline_points_for_frame(self) -> list[tuple[float, float]]:
-        camera_top_left, camera_top_right, camera_bottom_left, camera_bottom_right = (
+        game_top_left, game_top_right, game_bottom_left, game_bottom_right = (
             self._calibration_points
         )
-        points = [camera_top_left, camera_top_right, camera_bottom_right, camera_bottom_left]
+        points = [game_top_left, game_top_right, game_bottom_right, game_bottom_left]
         if self._calibration_uses_raw_frame():
             return [(float(x), float(y)) for x, y in points]
         return [self._preview_to_raw_point(float(x), float(y)) for x, y in points]
