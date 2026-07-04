@@ -8,7 +8,6 @@ from game.models import Tile
 from game.settings import (
     BG,
     CALIBRATION_DOT_RADIUS,
-    CALIBRATION_MARKER_RADIUS,
     CALIBRATION_MARKER_SIZE,
     CAMERA_HEIGHT,
     CAMERA_MARGIN,
@@ -181,25 +180,30 @@ class GameRenderer:
         points: list[list[float]],
         complete: bool,
         message: str,
+        camera_frame: pygame.Surface | None = None,
     ) -> None:
-        self.screen.fill((25, 25, 30))
-        markers = (
-            (0, 0, "1"),
-            (WIDTH, 0, "2"),
-            (0, HEIGHT, "3"),
-            (WIDTH, HEIGHT, "4"),
-        )
-        for x, y, label in markers:
-            pygame.draw.circle(self.screen, NUMBER_COLORS[1], (x, y), CALIBRATION_MARKER_RADIUS)
-            text = self.font.render(label, True, BG)
-            px = min(max(x, 34), WIDTH - 34)
-            py = min(max(y, 34), HEIGHT - 34)
-            self.screen.blit(text, text.get_rect(center=(px, py)))
+        self.screen.fill(BG)
+        title = self.title_font.render("Calibração", True, INK)
+        self.screen.blit(title, title.get_rect(center=(WIDTH // 2, 62)))
+        self._draw_camera_preview(camera_frame)
 
-        for index, (x, y) in enumerate(points, start=1):
+        preview = self._camera_preview_rect()
+        point_labels = ("1", "2", "3", "4")
+        for index, point in enumerate(points):
+            x = preview.x + point[0]
+            y = preview.y + point[1]
             pygame.draw.circle(self.screen, PLAYER, (int(x), int(y)), 10)
-            tag = self.menu_font.render(str(index), True, INK)
+            tag = self.menu_font.render(point_labels[index], True, INK)
             self.screen.blit(tag, (int(x) + 12, int(y) - 12))
+
+        if len(points) == 4:
+            outline = [
+                (preview.x + points[0][0], preview.y + points[0][1]),
+                (preview.x + points[1][0], preview.y + points[1][1]),
+                (preview.x + points[3][0], preview.y + points[3][1]),
+                (preview.x + points[2][0], preview.y + points[2][1]),
+            ]
+            pygame.draw.lines(self.screen, (78, 196, 112), True, outline, 3)
 
         if complete:
             instruction = "4 cantos marcados. Enter confirma, Backspace desfaz, R reinicia."
@@ -219,6 +223,12 @@ class GameRenderer:
             self.screen.blit(footer, footer.get_rect(center=(WIDTH // 2, HEIGHT - 42)))
 
         pygame.display.flip()
+
+    def calibration_point_at(self, position: tuple[int, int]) -> tuple[float, float] | None:
+        preview = self._camera_preview_rect()
+        if not preview.collidepoint(position):
+            return None
+        return float(position[0] - preview.x), float(position[1] - preview.y)
 
     def camera_option_at(self, position: tuple[int, int]) -> int | None:
         for index, rect in self.camera_option_rects.items():
@@ -302,27 +312,25 @@ class GameRenderer:
     def _draw_feet(self, foot_positions: dict[str, tuple[float, float] | None]) -> None:
         left = foot_positions.get("left")
         right = foot_positions.get("right")
+        center = foot_positions.get("center")
         if left is not None:
-            self._draw_foot_marker(left, (0, 102, 255))
+            self._draw_foot_marker(left, (0, 0, 255), 30)
         if right is not None:
-            self._draw_foot_marker(right, (255, 64, 64))
+            self._draw_foot_marker(right, (255, 0, 0), 30)
+        if center is not None:
+            self._draw_foot_marker(center, (0, 255, 0), 35)
 
     def _draw_foot_marker(
         self,
         point: tuple[float, float],
         color: tuple[int, int, int],
+        radius: int,
     ) -> None:
         center = (int(point[0]), int(point[1]))
-        pygame.draw.circle(self.screen, color, center, 18, width=3)
-        pygame.draw.circle(self.screen, color, center, 5)
+        pygame.draw.circle(self.screen, color, center, radius)
 
     def _draw_camera_preview(self, frame: pygame.Surface | None) -> None:
-        rect = pygame.Rect(
-            WIDTH - CAMERA_MARGIN - CAMERA_WIDTH,
-            (HEIGHT - CAMERA_HEIGHT) // 2,
-            CAMERA_WIDTH,
-            CAMERA_HEIGHT,
-        )
+        rect = self._camera_preview_rect()
         pygame.draw.rect(self.screen, PANEL, rect)
         pygame.draw.rect(self.screen, PANEL_BORDER, rect, width=2)
 
@@ -332,6 +340,14 @@ class GameRenderer:
 
         text = self.menu_font.render("Selecione uma câmera", True, INK)
         self.screen.blit(text, text.get_rect(center=rect.center))
+
+    def _camera_preview_rect(self) -> pygame.Rect:
+        return pygame.Rect(
+            WIDTH - CAMERA_MARGIN - CAMERA_WIDTH,
+            (HEIGHT - CAMERA_HEIGHT) // 2,
+            CAMERA_WIDTH,
+            CAMERA_HEIGHT,
+        )
 
     def _draw_gear(self) -> None:
         center = self.gear_rect.center

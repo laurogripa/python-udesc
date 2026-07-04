@@ -6,7 +6,6 @@ from game.court import build_tiles
 from game.preferences import Preferences
 from game.renderer import GameRenderer
 from game.settings import (
-    AUTO_CALIBRATION_DELAY_MS,
     FPS,
     HEIGHT,
     HOP_GROUPS,
@@ -44,8 +43,6 @@ class Amarelinha:
         self.screen_state = ScreenState.GAME
         self.settings_error = ""
         self.calibration_message = ""
-        self.calibration_started_ms = 0
-        self.calibration_attempted = False
 
         self.tiles = build_tiles()
         self.tile_by_number = {tile.number: tile for tile in self.tiles}
@@ -74,7 +71,6 @@ class Amarelinha:
 
             if self.screen_state == ScreenState.CALIBRATION:
                 self.camera.update()
-                self._update_auto_calibration()
             else:
                 self.camera.update()
                 gesture = self.camera.consume_gesture()
@@ -98,7 +94,7 @@ class Amarelinha:
                     self.screen_state = ScreenState.GAME
                     self.calibration_message = ""
                 else:
-                    self._start_auto_calibration()
+                    self._start_calibration()
                 return False
             return True
         if control_pressed and key == pygame.K_s:
@@ -173,7 +169,12 @@ class Amarelinha:
             return
 
         if self.screen_state == ScreenState.CALIBRATION:
-            self.renderer.draw_auto_calibration_screen(self.calibration_message)
+            self.renderer.draw_calibration_screen(
+                self.calibration.points,
+                self.calibration.complete,
+                self.calibration_message,
+                self.camera.frame,
+            )
             return
 
         self.renderer.draw(
@@ -210,11 +211,13 @@ class Amarelinha:
         self.settings_error = ""
         self.screen_state = ScreenState.SETTINGS
 
-    def _start_auto_calibration(self) -> None:
+    def _start_calibration(self) -> None:
         self.camera.ensure_devices()
-        self.calibration_message = "Posicione os marcadores. Capturando..."
-        self.calibration_started_ms = pygame.time.get_ticks()
-        self.calibration_attempted = False
+        self.calibration.clear()
+        self.calibration_message = (
+            "Clique no preview: superior esquerdo, superior direito, "
+            "inferior esquerdo, inferior direito."
+        )
         self.screen_state = ScreenState.CALIBRATION
 
     def _handle_settings_key(self, key: int) -> bool:
@@ -225,8 +228,16 @@ class Amarelinha:
     def _handle_calibration_key(self, key: int) -> bool:
         if key == pygame.K_ESCAPE:
             self.screen_state = ScreenState.GAME
+        elif key == pygame.K_RETURN and self.calibration.complete:
+            self.calibration.save(self.camera.selected_index)
+            self.camera.set_calibration(self.calibration.points)
+            self.calibration_message = "Calibração salva."
+            self.screen_state = ScreenState.GAME
+        elif key == pygame.K_BACKSPACE:
+            self.calibration.undo()
+            self._set_calibration_instruction()
         elif key == pygame.K_r:
-            self._start_auto_calibration()
+            self._start_calibration()
         return False
 
     def _handle_settings_click(self, position: tuple[int, int]) -> None:
@@ -254,14 +265,20 @@ class Amarelinha:
             return
 
         if self.renderer.settings_calibrate_at(position):
-            self._start_auto_calibration()
+            self._start_calibration()
             return
 
         if self.renderer.settings_confirm_at(position):
             self.screen_state = ScreenState.GAME
 
     def _handle_calibration_click(self, position: tuple[int, int]) -> None:
-        return
+        point = self.renderer.calibration_point_at(position)
+        if point is None:
+            self.calibration_message = "Clique dentro do preview da câmera."
+            return
+
+        self.calibration.add_point(*point)
+        self._set_calibration_instruction()
 
     def _load_calibration(self) -> None:
         if not self.calibration.load(self.camera.selected_index):
@@ -270,22 +287,15 @@ class Amarelinha:
             return
         self.camera.set_calibration(self.calibration.points)
 
-    def _update_auto_calibration(self) -> None:
-        if self.calibration_attempted:
-            return
-        if pygame.time.get_ticks() - self.calibration_started_ms < AUTO_CALIBRATION_DELAY_MS:
-            return
-
-        self.calibration_attempted = True
-        points = self.camera.auto_calibrate()
-        if points is None:
-            self.calibration_message = (
-                "Falha ao detectar marcadores. Pressione R para tentar de novo."
-            )
+    def _set_calibration_instruction(self) -> None:
+        if self.calibration.complete:
+            self.calibration_message = "Enter salva. Backspace desfaz. R reinicia."
             return
 
-        self.calibration.points = points
-        self.calibration.save(self.camera.selected_index)
-        self.camera.set_calibration(self.calibration.points)
-        self.calibration_message = "Calibração salva."
-        self.screen_state = ScreenState.GAME
+        labels = (
+            "superior esquerdo",
+            "superior direito",
+            "inferior esquerdo",
+            "inferior direito",
+        )
+        self.calibration_message = f"Clique no canto {labels[len(self.calibration.points)]}."

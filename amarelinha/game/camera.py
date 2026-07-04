@@ -11,7 +11,6 @@ from game.settings import (
     BODY_SINGLE_LEG_Y_DELTA_FRAC,
     BODY_STABLE_FRAMES,
     BODY_VISIBILITY_THRESHOLD,
-    CALIBRATION_DOT_RADIUS,
     CALIBRATION_MIN_CONTOUR_AREA,
     CAMERA_HEIGHT,
     CAMERA_SCAN_LIMIT,
@@ -114,10 +113,7 @@ class CameraManager:
         self.body_tracking_available = False
         self.show_skeleton = False
         self._foot_points: dict[str, tuple[float, float] | None] = {"left": None, "right": None}
-        self._projected_foot_points: dict[str, tuple[float, float] | None] = {
-            "left": None,
-            "right": None,
-        }
+        self._projected_foot_points: dict[str, tuple[float, float] | None] = self._empty_feet()
         self._body_support: str | None = None
         self.jump_probability = 0.0
         self._calibration_points: list[list[float]] = []
@@ -213,7 +209,7 @@ class CameraManager:
         self.selected_index = None
         self.frame = None
         self._foot_points = {"left": None, "right": None}
-        self._projected_foot_points = {"left": None, "right": None}
+        self._projected_foot_points = self._empty_feet()
         self._body_support = None
         self.jump_probability = 0.0
         self._jump_history.clear()
@@ -229,7 +225,11 @@ class CameraManager:
         return {
             "left": self._projected_foot_points["left"],
             "right": self._projected_foot_points["right"],
+            "center": self._projected_foot_points["center"],
         }
+
+    def _empty_feet(self) -> dict[str, tuple[float, float] | None]:
+        return {"left": None, "right": None, "center": None}
 
     def auto_calibrate(self) -> list[list[float]] | None:
         frame = self._raw_frame
@@ -306,11 +306,10 @@ class CameraManager:
         top_left, top_right = sorted(top, key=lambda item: item[0][0])
         bottom_left, bottom_right = sorted(bottom, key=lambda item: item[0][0])
         points = [
-            # Camera view is upside down relative to the projected game.
-            list(self._marker_corner(bottom_right[1], "bottom_right")),
-            list(self._marker_corner(bottom_left[1], "bottom_left")),
-            list(self._marker_corner(top_right[1], "top_right")),
             list(self._marker_corner(top_left[1], "top_left")),
+            list(self._marker_corner(top_right[1], "top_right")),
+            list(self._marker_corner(bottom_left[1], "bottom_left")),
+            list(self._marker_corner(bottom_right[1], "bottom_right")),
         ]
         self._log_calibration_event(
             "auto_calibrate:success",
@@ -409,13 +408,15 @@ class CameraManager:
         pose_landmarks, feet = self._extract_pose_feet(frame)
         if feet is None:
             self._foot_points = {"left": None, "right": None}
-            self._projected_foot_points = {"left": None, "right": None}
+            self._projected_foot_points = self._empty_feet()
             self._body_support = None
             self.jump_probability = 0.0
             self._jump_history.clear()
             return pose_landmarks, None
 
         left_x, left_y, right_x, right_y = feet
+        center_x = (left_x + right_x) / 2
+        center_y = (left_y + right_y) / 2
         self._update_jump_probability(pose_landmarks)
         self._foot_points = {
             "left": (left_x, left_y),
@@ -424,6 +425,7 @@ class CameraManager:
         self._projected_foot_points = {
             "left": self._project_point(left_x, left_y),
             "right": self._project_point(right_x, right_y),
+            "center": self._project_point(center_x, center_y),
         }
         foot_distance = ((left_x - right_x) ** 2 + (left_y - right_y) ** 2) ** 0.5
         if foot_distance < BODY_MIN_FEET_DISTANCE_FRAC:
@@ -568,7 +570,7 @@ class CameraManager:
         import cv2
         import numpy as np
 
-        points = np.array(self._ordered_outline_points(), dtype=np.int32)
+        points = np.array(self._ordered_outline_points_for_frame(), dtype=np.int32)
         cv2.polylines(frame, [points], True, (0, 255, 0), 3)
 
     def _update_jump_probability(self, landmarks: Any | None) -> None:
@@ -650,20 +652,79 @@ class CameraManager:
             ]
         )
         matrix = cv2.getPerspectiveTransform(source, target)
-        point = np.array([[[x * CAMERA_WIDTH, y * CAMERA_HEIGHT]]], dtype=np.float32)
+        point_x, point_y = self._normalized_to_calibration_point(x, y)
+        point = np.array([[[point_x, point_y]]], dtype=np.float32)
         transformed = cv2.perspectiveTransform(point, matrix)[0][0]
         return float(transformed[0]), float(transformed[1])
 
-    def _ordered_outline_points(self) -> list[list[float]]:
-        camera_bottom_right, camera_bottom_left, camera_top_right, camera_top_left = (
+    def _normalized_to_calibration_point(self, x: float, y: float) -> tuple[float, float]:
+        if self._calibration_uses_raw_frame():
+            return self._normalized_to_raw_point(x, y)
+        return self._normalized_to_preview_point(x, y)
+
+    def _normalized_to_raw_point(self, x: float, y: float) -> tuple[float, float]:
+        if self._raw_frame is None:
+            return x * CAMERA_WIDTH, y * CAMERA_HEIGHT
+
+        height, width = self._raw_frame.shape[:2]
+        return x * width, y * height
+
+    def _normalized_to_preview_point(self, x: float, y: float) -> tuple[float, float]:
+        if self._raw_frame is None:
+            return x * CAMERA_WIDTH, y * CAMERA_HEIGHT
+
+        height, width = self._raw_frame.shape[:2]
+        target_ratio = CAMERA_WIDTH / CAMERA_HEIGHT
+        source_ratio = width / height
+        pixel_x = x * width
+        pixel_y = y * height
+
+        if source_ratio > target_ratio:
+            crop_width = round(height * target_ratio)
+            left = (width - crop_width) // 2
+            return (pixel_x - left) * CAMERA_WIDTH / crop_width, pixel_y * CAMERA_HEIGHT / height
+
+        if source_ratio < target_ratio:
+            crop_height = round(width / target_ratio)
+            top = (height - crop_height) // 2
+            return pixel_x * CAMERA_WIDTH / width, (pixel_y - top) * CAMERA_HEIGHT / crop_height
+
+        return pixel_x * CAMERA_WIDTH / width, pixel_y * CAMERA_HEIGHT / height
+
+    def _ordered_outline_points_for_frame(self) -> list[tuple[float, float]]:
+        camera_top_left, camera_top_right, camera_bottom_left, camera_bottom_right = (
             self._calibration_points
         )
-        return [
-            camera_top_left,
-            camera_top_right,
-            camera_bottom_right,
-            camera_bottom_left,
-        ]
+        points = [camera_top_left, camera_top_right, camera_bottom_right, camera_bottom_left]
+        if self._calibration_uses_raw_frame():
+            return [(float(x), float(y)) for x, y in points]
+        return [self._preview_to_raw_point(float(x), float(y)) for x, y in points]
+
+    def _preview_to_raw_point(self, x: float, y: float) -> tuple[float, float]:
+        if self._raw_frame is None:
+            return x, y
+
+        height, width = self._raw_frame.shape[:2]
+        target_ratio = CAMERA_WIDTH / CAMERA_HEIGHT
+        source_ratio = width / height
+
+        if source_ratio > target_ratio:
+            crop_width = round(height * target_ratio)
+            left = (width - crop_width) // 2
+            return left + x * crop_width / CAMERA_WIDTH, y * height / CAMERA_HEIGHT
+
+        if source_ratio < target_ratio:
+            crop_height = round(width / target_ratio)
+            top = (height - crop_height) // 2
+            return x * width / CAMERA_WIDTH, top + y * crop_height / CAMERA_HEIGHT
+
+        return x * width / CAMERA_WIDTH, y * height / CAMERA_HEIGHT
+
+    def _calibration_uses_raw_frame(self) -> bool:
+        return any(
+            x < 0 or x > CAMERA_WIDTH or y < 0 or y > CAMERA_HEIGHT
+            for x, y in self._calibration_points
+        )
 
     def _marker_corner(
         self,
