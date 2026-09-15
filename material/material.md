@@ -21,7 +21,7 @@ paginate: true
 Prof. Dr. Marcelo da Silva Hounsell<br>
 Computação Gráfica Avançada<br>
 Mestrado em Computação Aplicada<br>
-15/06/2026
+15/09/2026
 </div>
 
 ---
@@ -34,7 +34,7 @@ Mestrado em Computação Aplicada<br>
 
 - Graduado em **Tecnologia em Análise e Desenvolvimento de Sistemas** pela Universidade do Estado de Santa Catarina, em 2016.
 - Começou a programar por hobby aos **13 anos**, com mIRC Script.
-- Iniciou profissionalmente aos **22 anos**, com PHP e JavaScript.
+- Iniciou profissionalmente aos **21 anos**, com PHP e JavaScript.
 - **2,5 anos** no desenvolvimento de ERPs.
 - **5 anos** em consultoria e *outsourcing* especializado, trabalhando com diversas linguagens.
 - Experiência principalmente com **Ruby on Rails**.
@@ -59,17 +59,6 @@ Mestrado em Computação Aplicada<br>
 - Usos comuns
 - Exemplos
 - Exercícios
-
----
-
-<!-- _class: content -->
-
-## Avisos importantes
-
-- **30 minutos de mentoria** para cada equipe.
-- Todas as equipes terão o mesmo direito.
-- Basta marcar um horário pelo [https://calendly.com/lauro-gripa/30min](https://calendly.com/lauro-gripa/30min).
-- Confirmação por e-mail.
 
 ---
 
