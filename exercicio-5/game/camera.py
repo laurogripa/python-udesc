@@ -1,3 +1,4 @@
+import sys
 from dataclasses import dataclass
 from typing import Any
 
@@ -78,8 +79,14 @@ class CameraManager:
     def _open_capture(self, index: int) -> Any:
         import cv2
 
-        if hasattr(cv2, "CAP_AVFOUNDATION"):
+        # OpenCV defines every backend constant on every platform, so pick the
+        # backend by OS rather than by attribute presence.
+        if sys.platform == "darwin":
             return cv2.VideoCapture(index, cv2.CAP_AVFOUNDATION)
+        if sys.platform == "win32":
+            return cv2.VideoCapture(index, cv2.CAP_DSHOW)
+        if sys.platform.startswith("linux"):
+            return cv2.VideoCapture(index, cv2.CAP_V4L2)
         return cv2.VideoCapture(index)
 
     def _crop_to_preview(self, frame: Any) -> Any:
