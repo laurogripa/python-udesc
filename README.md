@@ -18,21 +18,54 @@ Consulte a documentação oficial de cada ferramenta:
 - **Python 3.13.7:** <https://www.python.org/downloads/release/python-3137/>
 - **pip:** <https://pip.pypa.io/en/stable/installation/>
 
-Run:
+### Ambiente virtual (venv)
+
+Recomenda-se instalar as dependências em um ambiente virtual, criado na raiz do repositório e
+compartilhado por todas as pastas (`amarelinha`, `amarelinha-chao`, `exercicio-1`, etc.).
+
+#### Linux / macOS
 
 ```bash
-cd amarelinha
-python3 -m pip install -r requirements-dev.txt
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r amarelinha/requirements-dev.txt
 ```
 
-Para a versão com projeção no chão:
+#### Windows
+
+No PowerShell:
+
+```powershell
+py -3.13 -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r amarelinha\requirements-dev.txt
+```
+
+No Prompt de Comando (cmd):
+
+```bat
+py -3.13 -m venv .venv
+.venv\Scripts\activate.bat
+python -m pip install --upgrade pip
+python -m pip install -r amarelinha\requirements-dev.txt
+```
+
+> Se o PowerShell bloquear a ativação por política de execução, rode antes:
+> `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
+
+Para a versão com projeção no chão, com o ambiente ativado:
 
 ```bash
-cd amarelinha-chao
-python3 -m pip install -r requirements-dev.txt
+python -m pip install -r amarelinha-chao/requirements-dev.txt
 ```
 
-Repita o comando em cada pasta de exercício (`exercicio-1`, `exercicio-2`, etc.) para instalar as dependências de desenvolvimento.
+Repita o comando apontando para o `requirements-dev.txt` de cada pasta de exercício
+(`exercicio-1`, `exercicio-2`, etc.) para instalar as dependências de desenvolvimento.
+
+Com o ambiente ativado, o prefixo `(.venv)` aparece no terminal e o comando `python` já usa o
+Python do ambiente. Para sair, execute `deactivate`.
 
 # Progressão dos exercícios da Amarelinha
 
