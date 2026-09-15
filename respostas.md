@@ -49,9 +49,11 @@ elif key == pygame.K_2:
 
 ## Exercício 5
 
-Adicionar o MediaPipe às dependências de `exercicio-5/requirements.txt`:
+Em `exercicio-5/requirements.txt`, substituir `opencv-python` por `mediapipe`. O MediaPipe já
+instala o OpenCV (`opencv-contrib-python`), e os dois pacotes não devem ser instalados juntos:
 
 ```text
+pygame==2.6.1
 mediapipe==0.10.35
 ```
 
@@ -61,7 +63,12 @@ estado necessário para estabilizar os gestos:
 ```python
 from pathlib import Path
 
-from game.settings import GESTURE_STABLE_FRAMES
+from game.settings import (
+    CAMERA_HEIGHT,
+    CAMERA_SCAN_LIMIT,
+    CAMERA_WIDTH,
+    GESTURE_STABLE_FRAMES,
+)
 
 MODEL_PATH = Path(__file__).parent.parent / "assets" / "models" / "hand_landmarker.task"
 ```
