@@ -7,15 +7,15 @@ Projeto de implementação do clássico jogo infantil Amarelinha, desenvolvido p
 ## Requisitos
 
 - **pyenv** 2.7.2
-- **Python** 3.13.7
-- **pip** — incluso com Python 3.13.7 (`python3 -m pip`)
+- **Python** 3.12
+- **pip** — incluso com Python 3.12 (`python3 -m pip`)
 
 ### Instalação
 
 Consulte a documentação oficial de cada ferramenta:
 
 - **pyenv:** <https://github.com/pyenv/pyenv#installation>
-- **Python 3.13.7:** <https://www.python.org/downloads/release/python-3137/>
+- **Python 3.12:** <https://www.python.org/downloads/>
 - **pip:** <https://pip.pypa.io/en/stable/installation/>
 
 ### Ambiente virtual (venv)
@@ -37,7 +37,7 @@ python -m pip install -r amarelinha/requirements-dev.txt
 No PowerShell:
 
 ```powershell
-py -3.13 -m venv .venv
+py -3.12 -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -r amarelinha\requirements-dev.txt
@@ -46,7 +46,7 @@ python -m pip install -r amarelinha\requirements-dev.txt
 No Prompt de Comando (cmd):
 
 ```bat
-py -3.13 -m venv .venv
+py -3.12 -m venv .venv
 .venv\Scripts\activate.bat
 python -m pip install --upgrade pip
 python -m pip install -r amarelinha\requirements-dev.txt
@@ -54,6 +54,50 @@ python -m pip install -r amarelinha\requirements-dev.txt
 
 > Se o PowerShell bloquear a ativação por política de execução, rode antes:
 > `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
+
+#### Linux sem `python3.12-venv` (sem root)
+
+Em Debian/Ubuntu, o módulo `venv` pode falhar com a mensagem
+`ensurepip is not available`, sugerindo instalar o pacote `python3.12-venv`. Sem acesso root,
+crie o ambiente sem o pip e instale o pip manualmente. Execute um comando por vez:
+
+```bash
+python3.12 -m venv --without-pip .venv
+```
+
+```bash
+source .venv/bin/activate
+```
+
+```bash
+curl -sS https://bootstrap.pypa.io/get-pip.py | python
+```
+
+```bash
+python -m pip install -r amarelinha/requirements-dev.txt
+```
+
+> Se o `curl` não estiver disponível, use
+> `wget -qO- https://bootstrap.pypa.io/get-pip.py | python`.
+
+Se até o `--without-pip` falhar, o próprio módulo `venv` está ausente. Nesse caso, use o
+`virtualenv` standalone, que não depende de nada do sistema:
+
+```bash
+wget https://bootstrap.pypa.io/virtualenv.pyz
+```
+
+```bash
+python3.12 virtualenv.pyz .venv
+```
+
+```bash
+source .venv/bin/activate
+```
+
+```bash
+python -m pip install -r amarelinha/requirements-dev.txt
+```
 
 Para a versão com projeção no chão, com o ambiente ativado:
 
