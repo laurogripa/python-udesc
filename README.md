@@ -111,6 +111,36 @@ Repita o comando apontando para o `requirements-dev.txt` de cada pasta de exerc�
 Com o ambiente ativado, o prefixo `(.venv)` aparece no terminal e o comando `python` já usa o
 Python do ambiente. Para sair, execute `deactivate`.
 
+### Executando o jogo
+
+Com o ambiente ativado, entre na pasta desejada e execute o `main.py`. Cada pasta é
+independente e precisa ser executada a partir do seu próprio diretório:
+
+```bash
+cd amarelinha
+```
+
+```bash
+python main.py
+```
+
+Para os exercícios, troque a pasta (`exercicio-1`, `exercicio-2`, etc.):
+
+```bash
+cd exercicio-1
+```
+
+```bash
+python main.py
+```
+
+Todas as versões aceitam `--smoke-test`, que inicializa o jogo, desenha um quadro e encerra.
+É útil para conferir se as dependências foram instaladas corretamente:
+
+```bash
+python main.py --smoke-test
+```
+
 # Progressão dos exercícios da Amarelinha
 
 A pasta `amarelinha` contém a implementação final e não deve ser alterada. Em todos os
